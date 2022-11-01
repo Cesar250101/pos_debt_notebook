@@ -10,40 +10,40 @@ from odoo import api, fields, models, tools
 class Pagos(models.Model):
     _inherit = 'account.payment'
 
-    def write(self, vals):
-        rec= super(Pagos,self).write(vals)
-        credito=self.env['pos.credit.update'].search([('partner_id','=',self.partner_id.id),('update_type','=','new_balance')],order='date desc',limit=1)        
-        credito_asignado=credito.new_balance
-        monto_actualizar=self.amount if self.amount<credito_asignado else  credito_asignado
-        if credito:
-            credito_update=self.env['pos.credit.update'].search([])
-            credito_report=self.env['report.pos.debt'].search([])
-            # values={
+    # def write(self, vals):
+    #     rec= super(Pagos,self).write(vals)
+    #     credito=self.env['pos.credit.update'].search([('partner_id','=',self.partner_id.id),('update_type','=','new_balance')],order='date desc',limit=1)        
+    #     credito_asignado=credito.new_balance
+    #     monto_actualizar=self.amount if self.amount<credito_asignado else  credito_asignado
+    #     if credito:
+    #         credito_update=self.env['pos.credit.update'].search([])
+    #         credito_report=self.env['report.pos.debt'].search([])
+    #         # values={
                 
-            #     'balance':self.amount,
-            #     'state':'confirm',
-            #     'partner_id':self.partner_id.id,
-            #     'user_id':self.env.user.id,
-            #     'company_id':1,
-            #     'currency_id':45,
-            #     'journal_id':12,
-            # }
-            values_update={
-                'balance':monto_actualizar,
-                'state':'confirm',
-                'partner_id':self.partner_id.id,
-                'user_id':self.env.user.id,
-                'company_id':1,
-                'currency_id':45,
-                'journal_id':12,
-                'update_type':'balance_update',                
-            }
-            if self.state!='draft':            
-                #credito_r=self.env['report.pos.debt'].create(values)
-                credito_u=self.env['pos.credit.update'].create(values_update)
-                credito_u=credito_u.switch_to_confirm()
-                #print(credito_r)
-                print(credito_u)
+    #         #     'balance':self.amount,
+    #         #     'state':'confirm',
+    #         #     'partner_id':self.partner_id.id,
+    #         #     'user_id':self.env.user.id,
+    #         #     'company_id':1,
+    #         #     'currency_id':45,
+    #         #     'journal_id':12,
+    #         # }
+    #         values_update={
+    #             'balance':monto_actualizar,
+    #             'state':'confirm',
+    #             'partner_id':self.partner_id.id,
+    #             'user_id':self.env.user.id,
+    #             'company_id':1,
+    #             'currency_id':45,
+    #             'journal_id':12,
+    #             'update_type':'balance_update',                
+    #         }
+    #         if self.state!='draft':            
+    #             #credito_r=self.env['report.pos.debt'].create(values)
+    #             credito_u=self.env['pos.credit.update'].create(values_update)
+    #             credito_u=credito_u.switch_to_confirm()
+    #             #print(credito_r)
+    #             print(credito_u)
     
 
 class PosDebtReport(models.Model):
